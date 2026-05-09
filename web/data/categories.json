@@ -1,0 +1,230 @@
+{
+  "version": 1,
+  "categories": [
+    {
+      "id": "heroes",
+      "title": "Caped Heroes",
+      "subtitle": "Brave heroes saving the day",
+      "heroImage": "CategoryHeroes/heroes",
+      "accentHex": "#FF3B30",
+      "pages": [
+        { "id": "heroes_caped_kid",       "title": "Caped Kid",       "lineArt": "LineArt/heroes/caped_kid.svg",       "regionMask": "LineArt/heroes/caped_kid.mask.png",       "thumbnail": "LineArt/heroes/caped_kid.thumb.png" },
+        { "id": "heroes_super_pup",       "title": "Super Pup",       "lineArt": "LineArt/heroes/super_pup.svg",       "regionMask": "LineArt/heroes/super_pup.mask.png",       "thumbnail": "LineArt/heroes/super_pup.thumb.png" },
+        { "id": "heroes_lightning_girl",  "title": "Lightning Girl",  "lineArt": "LineArt/heroes/lightning_girl.svg",  "regionMask": "LineArt/heroes/lightning_girl.mask.png",  "thumbnail": "LineArt/heroes/lightning_girl.thumb.png" },
+        { "id": "heroes_shield_bear",     "title": "Shield Bear",     "lineArt": "LineArt/heroes/shield_bear.svg",     "regionMask": "LineArt/heroes/shield_bear.mask.png",     "thumbnail": "LineArt/heroes/shield_bear.thumb.png" },
+        { "id": "heroes_team_pose",       "title": "Team Pose",       "lineArt": "LineArt/heroes/team_pose.svg",       "regionMask": "LineArt/heroes/team_pose.mask.png",       "thumbnail": "LineArt/heroes/team_pose.thumb.png" },
+        { "id": "heroes_sky_glide",       "title": "Sky Glide",       "lineArt": "LineArt/heroes/sky_glide.svg",       "regionMask": "LineArt/heroes/sky_glide.mask.png",       "thumbnail": "LineArt/heroes/sky_glide.thumb.png" }
+      ]
+    },
+    {
+      "id": "princesses",
+      "title": "Princesses & Princes",
+      "subtitle": "Castles, crowns and royal friends",
+      "heroImage": "CategoryHeroes/princesses",
+      "accentHex": "#FF6B6B",
+      "pages": [
+        { "id": "princess_garden",   "title": "Princess in the Garden", "lineArt": "LineArt/princesses/princess_garden.svg",   "regionMask": "LineArt/princesses/princess_garden.mask.png",   "thumbnail": "LineArt/princesses/princess_garden.thumb.png" },
+        { "id": "prince_horse",      "title": "Prince and Horse",       "lineArt": "LineArt/princesses/prince_horse.svg",      "regionMask": "LineArt/princesses/prince_horse.mask.png",      "thumbnail": "LineArt/princesses/prince_horse.thumb.png" },
+        { "id": "castle_clouds",     "title": "Castle in the Clouds",   "lineArt": "LineArt/princesses/castle_clouds.svg",     "regionMask": "LineArt/princesses/castle_clouds.mask.png",     "thumbnail": "LineArt/princesses/castle_clouds.thumb.png" },
+        { "id": "royal_ball",        "title": "Royal Ball",              "lineArt": "LineArt/princesses/royal_ball.svg",        "regionMask": "LineArt/princesses/royal_ball.mask.png",        "thumbnail": "LineArt/princesses/royal_ball.thumb.png" },
+        { "id": "fairy_godmother",   "title": "Fairy Godmother",         "lineArt": "LineArt/princesses/fairy_godmother.svg",   "regionMask": "LineArt/princesses/fairy_godmother.mask.png",   "thumbnail": "LineArt/princesses/fairy_godmother.thumb.png" },
+        { "id": "crown_jewels",      "title": "Crown Jewels",            "lineArt": "LineArt/princesses/crown_jewels.svg",      "regionMask": "LineArt/princesses/crown_jewels.mask.png",      "thumbnail": "LineArt/princesses/crown_jewels.thumb.png" }
+      ]
+    },
+    {
+      "id": "unicorns",
+      "title": "Unicorns",
+      "subtitle": "Sparkly magical horses",
+      "heroImage": "CategoryHeroes/unicorns",
+      "accentHex": "#FF2D92",
+      "pages": [
+        { "id": "rainbow_unicorn",   "title": "Rainbow Unicorn",   "lineArt": "LineArt/unicorns/rainbow_unicorn.svg",   "regionMask": "LineArt/unicorns/rainbow_unicorn.mask.png",   "thumbnail": "LineArt/unicorns/rainbow_unicorn.thumb.png" },
+        { "id": "starry_meadow",     "title": "Starry Meadow",     "lineArt": "LineArt/unicorns/starry_meadow.svg",     "regionMask": "LineArt/unicorns/starry_meadow.mask.png",     "thumbnail": "LineArt/unicorns/starry_meadow.thumb.png" },
+        { "id": "baby_unicorn",      "title": "Baby Unicorn",      "lineArt": "LineArt/unicorns/baby_unicorn.svg",      "regionMask": "LineArt/unicorns/baby_unicorn.mask.png",      "thumbnail": "LineArt/unicorns/baby_unicorn.thumb.png" },
+        { "id": "unicorn_friends",   "title": "Unicorn Friends",   "lineArt": "LineArt/unicorns/unicorn_friends.svg",   "regionMask": "LineArt/unicorns/unicorn_friends.mask.png",   "thumbnail": "LineArt/unicorns/unicorn_friends.thumb.png" },
+        { "id": "candy_clouds",      "title": "Candy Clouds",      "lineArt": "LineArt/unicorns/candy_clouds.svg",      "regionMask": "LineArt/unicorns/candy_clouds.mask.png",      "thumbnail": "LineArt/unicorns/candy_clouds.thumb.png" },
+        { "id": "magic_horn",        "title": "Magic Horn",        "lineArt": "LineArt/unicorns/magic_horn.svg",        "regionMask": "LineArt/unicorns/magic_horn.mask.png",        "thumbnail": "LineArt/unicorns/magic_horn.thumb.png" }
+      ]
+    },
+    {
+      "id": "dinosaurs",
+      "title": "Dinosaurs",
+      "subtitle": "Roar! Friendly prehistoric pals",
+      "heroImage": "CategoryHeroes/dinosaurs",
+      "accentHex": "#34C759",
+      "pages": [
+        { "id": "happy_trex",        "title": "Happy T-Rex",       "lineArt": "LineArt/dinosaurs/happy_trex.svg",        "regionMask": "LineArt/dinosaurs/happy_trex.mask.png",        "thumbnail": "LineArt/dinosaurs/happy_trex.thumb.png" },
+        { "id": "long_neck",         "title": "Long Neck",         "lineArt": "LineArt/dinosaurs/long_neck.svg",         "regionMask": "LineArt/dinosaurs/long_neck.mask.png",         "thumbnail": "LineArt/dinosaurs/long_neck.thumb.png" },
+        { "id": "tri_horns",         "title": "Tri Horns",         "lineArt": "LineArt/dinosaurs/tri_horns.svg",         "regionMask": "LineArt/dinosaurs/tri_horns.mask.png",         "thumbnail": "LineArt/dinosaurs/tri_horns.thumb.png" },
+        { "id": "stego_smile",       "title": "Stego Smile",       "lineArt": "LineArt/dinosaurs/stego_smile.svg",       "regionMask": "LineArt/dinosaurs/stego_smile.mask.png",       "thumbnail": "LineArt/dinosaurs/stego_smile.thumb.png" },
+        { "id": "egg_hatch",         "title": "Egg Hatch",         "lineArt": "LineArt/dinosaurs/egg_hatch.svg",         "regionMask": "LineArt/dinosaurs/egg_hatch.mask.png",         "thumbnail": "LineArt/dinosaurs/egg_hatch.thumb.png" },
+        { "id": "volcano_valley",    "title": "Volcano Valley",    "lineArt": "LineArt/dinosaurs/volcano_valley.svg",    "regionMask": "LineArt/dinosaurs/volcano_valley.mask.png",    "thumbnail": "LineArt/dinosaurs/volcano_valley.thumb.png" }
+      ]
+    },
+    {
+      "id": "butterflies",
+      "title": "Butterflies & Bugs",
+      "subtitle": "Wings and tiny critters",
+      "heroImage": "CategoryHeroes/butterflies",
+      "accentHex": "#AF52DE",
+      "pages": [
+        { "id": "big_butterfly",     "title": "Big Butterfly",     "lineArt": "LineArt/butterflies/big_butterfly.svg",     "regionMask": "LineArt/butterflies/big_butterfly.mask.png",     "thumbnail": "LineArt/butterflies/big_butterfly.thumb.png" },
+        { "id": "ladybug_leaf",      "title": "Ladybug on a Leaf", "lineArt": "LineArt/butterflies/ladybug_leaf.svg",      "regionMask": "LineArt/butterflies/ladybug_leaf.mask.png",      "thumbnail": "LineArt/butterflies/ladybug_leaf.thumb.png" },
+        { "id": "bee_flower",        "title": "Bee on a Flower",   "lineArt": "LineArt/butterflies/bee_flower.svg",        "regionMask": "LineArt/butterflies/bee_flower.mask.png",        "thumbnail": "LineArt/butterflies/bee_flower.thumb.png" },
+        { "id": "caterpillar_row",   "title": "Caterpillar Row",   "lineArt": "LineArt/butterflies/caterpillar_row.svg",   "regionMask": "LineArt/butterflies/caterpillar_row.mask.png",   "thumbnail": "LineArt/butterflies/caterpillar_row.thumb.png" },
+        { "id": "dragonfly_pond",    "title": "Dragonfly Pond",    "lineArt": "LineArt/butterflies/dragonfly_pond.svg",    "regionMask": "LineArt/butterflies/dragonfly_pond.mask.png",    "thumbnail": "LineArt/butterflies/dragonfly_pond.thumb.png" },
+        { "id": "snail_garden",      "title": "Snail Garden",      "lineArt": "LineArt/butterflies/snail_garden.svg",      "regionMask": "LineArt/butterflies/snail_garden.mask.png",      "thumbnail": "LineArt/butterflies/snail_garden.thumb.png" }
+      ]
+    },
+    {
+      "id": "fantasy",
+      "title": "Dragons & Wizards",
+      "subtitle": "Magic spells and tiny dragons",
+      "heroImage": "CategoryHeroes/fantasy",
+      "accentHex": "#5856D6",
+      "pages": [
+        { "id": "baby_dragon",       "title": "Baby Dragon",       "lineArt": "LineArt/fantasy/baby_dragon.svg",       "regionMask": "LineArt/fantasy/baby_dragon.mask.png",       "thumbnail": "LineArt/fantasy/baby_dragon.thumb.png" },
+        { "id": "wizard_hat",        "title": "Wizard Hat",        "lineArt": "LineArt/fantasy/wizard_hat.svg",        "regionMask": "LineArt/fantasy/wizard_hat.mask.png",        "thumbnail": "LineArt/fantasy/wizard_hat.thumb.png" },
+        { "id": "potion_brew",       "title": "Potion Brew",       "lineArt": "LineArt/fantasy/potion_brew.svg",       "regionMask": "LineArt/fantasy/potion_brew.mask.png",       "thumbnail": "LineArt/fantasy/potion_brew.thumb.png" },
+        { "id": "spell_book",        "title": "Spell Book",        "lineArt": "LineArt/fantasy/spell_book.svg",        "regionMask": "LineArt/fantasy/spell_book.mask.png",        "thumbnail": "LineArt/fantasy/spell_book.thumb.png" },
+        { "id": "magic_owl",         "title": "Magic Owl",         "lineArt": "LineArt/fantasy/magic_owl.svg",         "regionMask": "LineArt/fantasy/magic_owl.mask.png",         "thumbnail": "LineArt/fantasy/magic_owl.thumb.png" },
+        { "id": "crystal_cave",      "title": "Crystal Cave",      "lineArt": "LineArt/fantasy/crystal_cave.svg",      "regionMask": "LineArt/fantasy/crystal_cave.mask.png",      "thumbnail": "LineArt/fantasy/crystal_cave.thumb.png" }
+      ]
+    },
+    {
+      "id": "space",
+      "title": "Space & Rockets",
+      "subtitle": "Blast off to the stars",
+      "heroImage": "CategoryHeroes/space",
+      "accentHex": "#0A2A6B",
+      "pages": [
+        { "id": "smiley_rocket",     "title": "Smiley Rocket",     "lineArt": "LineArt/space/smiley_rocket.svg",     "regionMask": "LineArt/space/smiley_rocket.mask.png",     "thumbnail": "LineArt/space/smiley_rocket.thumb.png" },
+        { "id": "moon_picnic",       "title": "Moon Picnic",       "lineArt": "LineArt/space/moon_picnic.svg",       "regionMask": "LineArt/space/moon_picnic.mask.png",       "thumbnail": "LineArt/space/moon_picnic.thumb.png" },
+        { "id": "alien_friend",      "title": "Alien Friend",      "lineArt": "LineArt/space/alien_friend.svg",      "regionMask": "LineArt/space/alien_friend.mask.png",      "thumbnail": "LineArt/space/alien_friend.thumb.png" },
+        { "id": "planet_parade",     "title": "Planet Parade",     "lineArt": "LineArt/space/planet_parade.svg",     "regionMask": "LineArt/space/planet_parade.mask.png",     "thumbnail": "LineArt/space/planet_parade.thumb.png" },
+        { "id": "astronaut_pup",     "title": "Astronaut Pup",     "lineArt": "LineArt/space/astronaut_pup.svg",     "regionMask": "LineArt/space/astronaut_pup.mask.png",     "thumbnail": "LineArt/space/astronaut_pup.thumb.png" },
+        { "id": "shooting_star",     "title": "Shooting Star",     "lineArt": "LineArt/space/shooting_star.svg",     "regionMask": "LineArt/space/shooting_star.mask.png",     "thumbnail": "LineArt/space/shooting_star.thumb.png" }
+      ]
+    },
+    {
+      "id": "undersea",
+      "title": "Under the Sea",
+      "subtitle": "Mermaids, fish and sparkly bubbles",
+      "heroImage": "CategoryHeroes/undersea",
+      "accentHex": "#5AC8FA",
+      "pages": [
+        { "id": "happy_mermaid",     "title": "Happy Mermaid",     "lineArt": "LineArt/undersea/happy_mermaid.svg",     "regionMask": "LineArt/undersea/happy_mermaid.mask.png",     "thumbnail": "LineArt/undersea/happy_mermaid.thumb.png" },
+        { "id": "octopus_party",     "title": "Octopus Party",     "lineArt": "LineArt/undersea/octopus_party.svg",     "regionMask": "LineArt/undersea/octopus_party.mask.png",     "thumbnail": "LineArt/undersea/octopus_party.thumb.png" },
+        { "id": "school_fish",       "title": "School of Fish",    "lineArt": "LineArt/undersea/school_fish.svg",       "regionMask": "LineArt/undersea/school_fish.mask.png",       "thumbnail": "LineArt/undersea/school_fish.thumb.png" },
+        { "id": "coral_castle",      "title": "Coral Castle",      "lineArt": "LineArt/undersea/coral_castle.svg",      "regionMask": "LineArt/undersea/coral_castle.mask.png",      "thumbnail": "LineArt/undersea/coral_castle.thumb.png" },
+        { "id": "baby_seahorse",     "title": "Baby Seahorse",     "lineArt": "LineArt/undersea/baby_seahorse.svg",     "regionMask": "LineArt/undersea/baby_seahorse.mask.png",     "thumbnail": "LineArt/undersea/baby_seahorse.thumb.png" },
+        { "id": "treasure_chest",    "title": "Treasure Chest",    "lineArt": "LineArt/undersea/treasure_chest.svg",    "regionMask": "LineArt/undersea/treasure_chest.mask.png",    "thumbnail": "LineArt/undersea/treasure_chest.thumb.png" }
+      ]
+    },
+    {
+      "id": "jungle",
+      "title": "Jungle & Safari",
+      "subtitle": "Lions, tigers, elephants, oh my",
+      "heroImage": "CategoryHeroes/jungle",
+      "accentHex": "#FF9500",
+      "pages": [
+        { "id": "lion_cub",          "title": "Lion Cub",          "lineArt": "LineArt/jungle/lion_cub.svg",          "regionMask": "LineArt/jungle/lion_cub.mask.png",          "thumbnail": "LineArt/jungle/lion_cub.thumb.png" },
+        { "id": "elephant_splash",   "title": "Elephant Splash",   "lineArt": "LineArt/jungle/elephant_splash.svg",   "regionMask": "LineArt/jungle/elephant_splash.mask.png",   "thumbnail": "LineArt/jungle/elephant_splash.thumb.png" },
+        { "id": "monkey_swing",      "title": "Monkey Swing",      "lineArt": "LineArt/jungle/monkey_swing.svg",      "regionMask": "LineArt/jungle/monkey_swing.mask.png",      "thumbnail": "LineArt/jungle/monkey_swing.thumb.png" },
+        { "id": "giraffe_grin",      "title": "Giraffe Grin",      "lineArt": "LineArt/jungle/giraffe_grin.svg",      "regionMask": "LineArt/jungle/giraffe_grin.mask.png",      "thumbnail": "LineArt/jungle/giraffe_grin.thumb.png" },
+        { "id": "zebra_stripes",     "title": "Zebra Stripes",     "lineArt": "LineArt/jungle/zebra_stripes.svg",     "regionMask": "LineArt/jungle/zebra_stripes.mask.png",     "thumbnail": "LineArt/jungle/zebra_stripes.thumb.png" },
+        { "id": "toucan_tree",       "title": "Toucan Tree",       "lineArt": "LineArt/jungle/toucan_tree.svg",       "regionMask": "LineArt/jungle/toucan_tree.mask.png",       "thumbnail": "LineArt/jungle/toucan_tree.thumb.png" }
+      ]
+    },
+    {
+      "id": "farm",
+      "title": "Farm & Pets",
+      "subtitle": "Cuddly farm friends",
+      "heroImage": "CategoryHeroes/farm",
+      "accentHex": "#FFCC00",
+      "pages": [
+        { "id": "happy_cow",         "title": "Happy Cow",         "lineArt": "LineArt/farm/happy_cow.svg",         "regionMask": "LineArt/farm/happy_cow.mask.png",         "thumbnail": "LineArt/farm/happy_cow.thumb.png" },
+        { "id": "fluffy_sheep",      "title": "Fluffy Sheep",      "lineArt": "LineArt/farm/fluffy_sheep.svg",      "regionMask": "LineArt/farm/fluffy_sheep.mask.png",      "thumbnail": "LineArt/farm/fluffy_sheep.thumb.png" },
+        { "id": "pig_in_mud",        "title": "Pig in Mud",        "lineArt": "LineArt/farm/pig_in_mud.svg",        "regionMask": "LineArt/farm/pig_in_mud.mask.png",        "thumbnail": "LineArt/farm/pig_in_mud.thumb.png" },
+        { "id": "puppy_bone",        "title": "Puppy and Bone",    "lineArt": "LineArt/farm/puppy_bone.svg",        "regionMask": "LineArt/farm/puppy_bone.mask.png",        "thumbnail": "LineArt/farm/puppy_bone.thumb.png" },
+        { "id": "cat_yarn",          "title": "Cat with Yarn",     "lineArt": "LineArt/farm/cat_yarn.svg",          "regionMask": "LineArt/farm/cat_yarn.mask.png",          "thumbnail": "LineArt/farm/cat_yarn.thumb.png" },
+        { "id": "barn_morning",      "title": "Barn Morning",      "lineArt": "LineArt/farm/barn_morning.svg",      "regionMask": "LineArt/farm/barn_morning.mask.png",      "thumbnail": "LineArt/farm/barn_morning.thumb.png" }
+      ]
+    },
+    {
+      "id": "vehicles",
+      "title": "Vehicles",
+      "subtitle": "Cars, trucks, planes",
+      "heroImage": "CategoryHeroes/vehicles",
+      "accentHex": "#007AFF",
+      "pages": [
+        { "id": "race_car",          "title": "Race Car",          "lineArt": "LineArt/vehicles/race_car.svg",          "regionMask": "LineArt/vehicles/race_car.mask.png",          "thumbnail": "LineArt/vehicles/race_car.thumb.png" },
+        { "id": "fire_truck",        "title": "Fire Truck",        "lineArt": "LineArt/vehicles/fire_truck.svg",        "regionMask": "LineArt/vehicles/fire_truck.mask.png",        "thumbnail": "LineArt/vehicles/fire_truck.thumb.png" },
+        { "id": "school_bus",        "title": "School Bus",        "lineArt": "LineArt/vehicles/school_bus.svg",        "regionMask": "LineArt/vehicles/school_bus.mask.png",        "thumbnail": "LineArt/vehicles/school_bus.thumb.png" },
+        { "id": "airplane_clouds",   "title": "Airplane in Clouds","lineArt": "LineArt/vehicles/airplane_clouds.svg",   "regionMask": "LineArt/vehicles/airplane_clouds.mask.png",   "thumbnail": "LineArt/vehicles/airplane_clouds.thumb.png" },
+        { "id": "tractor_field",     "title": "Tractor in Field",  "lineArt": "LineArt/vehicles/tractor_field.svg",     "regionMask": "LineArt/vehicles/tractor_field.mask.png",     "thumbnail": "LineArt/vehicles/tractor_field.thumb.png" },
+        { "id": "boat_river",        "title": "Boat on a River",   "lineArt": "LineArt/vehicles/boat_river.svg",        "regionMask": "LineArt/vehicles/boat_river.mask.png",        "thumbnail": "LineArt/vehicles/boat_river.thumb.png" }
+      ]
+    },
+    {
+      "id": "robots",
+      "title": "Robots & Monsters",
+      "subtitle": "Friendly bots and silly monsters",
+      "heroImage": "CategoryHeroes/robots",
+      "accentHex": "#8E8E93",
+      "pages": [
+        { "id": "wave_robot",        "title": "Wave Robot",        "lineArt": "LineArt/robots/wave_robot.svg",        "regionMask": "LineArt/robots/wave_robot.mask.png",        "thumbnail": "LineArt/robots/wave_robot.thumb.png" },
+        { "id": "fluffy_monster",    "title": "Fluffy Monster",    "lineArt": "LineArt/robots/fluffy_monster.svg",    "regionMask": "LineArt/robots/fluffy_monster.mask.png",    "thumbnail": "LineArt/robots/fluffy_monster.thumb.png" },
+        { "id": "robot_dog",         "title": "Robot Dog",         "lineArt": "LineArt/robots/robot_dog.svg",         "regionMask": "LineArt/robots/robot_dog.mask.png",         "thumbnail": "LineArt/robots/robot_dog.thumb.png" },
+        { "id": "one_eye_monster",   "title": "One-Eye Monster",   "lineArt": "LineArt/robots/one_eye_monster.svg",   "regionMask": "LineArt/robots/one_eye_monster.mask.png",   "thumbnail": "LineArt/robots/one_eye_monster.thumb.png" },
+        { "id": "robot_band",        "title": "Robot Band",        "lineArt": "LineArt/robots/robot_band.svg",        "regionMask": "LineArt/robots/robot_band.mask.png",        "thumbnail": "LineArt/robots/robot_band.thumb.png" },
+        { "id": "monster_birthday",  "title": "Monster Birthday",  "lineArt": "LineArt/robots/monster_birthday.svg",  "regionMask": "LineArt/robots/monster_birthday.mask.png",  "thumbnail": "LineArt/robots/monster_birthday.thumb.png" }
+      ]
+    },
+    {
+      "id": "holidays",
+      "title": "Holidays & Seasons",
+      "subtitle": "Snowmen, pumpkins, fireworks",
+      "heroImage": "CategoryHeroes/holidays",
+      "accentHex": "#FF6B6B",
+      "pages": [
+        { "id": "snowman_smile",     "title": "Snowman Smile",     "lineArt": "LineArt/holidays/snowman_smile.svg",     "regionMask": "LineArt/holidays/snowman_smile.mask.png",     "thumbnail": "LineArt/holidays/snowman_smile.thumb.png" },
+        { "id": "pumpkin_patch",     "title": "Pumpkin Patch",     "lineArt": "LineArt/holidays/pumpkin_patch.svg",     "regionMask": "LineArt/holidays/pumpkin_patch.mask.png",     "thumbnail": "LineArt/holidays/pumpkin_patch.thumb.png" },
+        { "id": "spring_flowers",    "title": "Spring Flowers",    "lineArt": "LineArt/holidays/spring_flowers.svg",    "regionMask": "LineArt/holidays/spring_flowers.mask.png",    "thumbnail": "LineArt/holidays/spring_flowers.thumb.png" },
+        { "id": "summer_beach",      "title": "Summer Beach",      "lineArt": "LineArt/holidays/summer_beach.svg",      "regionMask": "LineArt/holidays/summer_beach.mask.png",      "thumbnail": "LineArt/holidays/summer_beach.thumb.png" },
+        { "id": "fall_leaves",       "title": "Fall Leaves",       "lineArt": "LineArt/holidays/fall_leaves.svg",       "regionMask": "LineArt/holidays/fall_leaves.mask.png",       "thumbnail": "LineArt/holidays/fall_leaves.thumb.png" },
+        { "id": "fireworks_night",   "title": "Fireworks Night",   "lineArt": "LineArt/holidays/fireworks_night.svg",   "regionMask": "LineArt/holidays/fireworks_night.mask.png",   "thumbnail": "LineArt/holidays/fireworks_night.thumb.png" }
+      ]
+    },
+    {
+      "id": "sweets",
+      "title": "Sweets & Food",
+      "subtitle": "Yummy treats with happy faces",
+      "heroImage": "CategoryHeroes/sweets",
+      "accentHex": "#FFE066",
+      "pages": [
+        { "id": "smiling_cookie",    "title": "Smiling Cookie",    "lineArt": "LineArt/sweets/smiling_cookie.svg",    "regionMask": "LineArt/sweets/smiling_cookie.mask.png",    "thumbnail": "LineArt/sweets/smiling_cookie.thumb.png" },
+        { "id": "cupcake_party",     "title": "Cupcake Party",     "lineArt": "LineArt/sweets/cupcake_party.svg",     "regionMask": "LineArt/sweets/cupcake_party.mask.png",     "thumbnail": "LineArt/sweets/cupcake_party.thumb.png" },
+        { "id": "ice_cream_tower",   "title": "Ice Cream Tower",   "lineArt": "LineArt/sweets/ice_cream_tower.svg",   "regionMask": "LineArt/sweets/ice_cream_tower.mask.png",   "thumbnail": "LineArt/sweets/ice_cream_tower.thumb.png" },
+        { "id": "pizza_slice",       "title": "Pizza Slice",       "lineArt": "LineArt/sweets/pizza_slice.svg",       "regionMask": "LineArt/sweets/pizza_slice.mask.png",       "thumbnail": "LineArt/sweets/pizza_slice.thumb.png" },
+        { "id": "donut_smile",       "title": "Donut Smile",       "lineArt": "LineArt/sweets/donut_smile.svg",       "regionMask": "LineArt/sweets/donut_smile.mask.png",       "thumbnail": "LineArt/sweets/donut_smile.thumb.png" },
+        { "id": "fruit_basket",      "title": "Fruit Basket",      "lineArt": "LineArt/sweets/fruit_basket.svg",      "regionMask": "LineArt/sweets/fruit_basket.mask.png",      "thumbnail": "LineArt/sweets/fruit_basket.thumb.png" }
+      ]
+    },
+    {
+      "id": "letters",
+      "title": "Letters & Numbers",
+      "subtitle": "ABC, 123 with friends",
+      "heroImage": "CategoryHeroes/letters",
+      "accentHex": "#A8E063",
+      "pages": [
+        { "id": "letter_a_apple",    "title": "A is for Apple",    "lineArt": "LineArt/letters/letter_a_apple.svg",    "regionMask": "LineArt/letters/letter_a_apple.mask.png",    "thumbnail": "LineArt/letters/letter_a_apple.thumb.png" },
+        { "id": "letter_b_bear",     "title": "B is for Bear",     "lineArt": "LineArt/letters/letter_b_bear.svg",     "regionMask": "LineArt/letters/letter_b_bear.mask.png",     "thumbnail": "LineArt/letters/letter_b_bear.thumb.png" },
+        { "id": "letter_c_cat",      "title": "C is for Cat",      "lineArt": "LineArt/letters/letter_c_cat.svg",      "regionMask": "LineArt/letters/letter_c_cat.mask.png",      "thumbnail": "LineArt/letters/letter_c_cat.thumb.png" },
+        { "id": "number_1_butterfly","title": "One Butterfly",     "lineArt": "LineArt/letters/number_1_butterfly.svg","regionMask": "LineArt/letters/number_1_butterfly.mask.png","thumbnail": "LineArt/letters/number_1_butterfly.thumb.png" },
+        { "id": "number_2_ducks",    "title": "Two Ducks",         "lineArt": "LineArt/letters/number_2_ducks.svg",    "regionMask": "LineArt/letters/number_2_ducks.mask.png",    "thumbnail": "LineArt/letters/number_2_ducks.thumb.png" },
+        { "id": "number_3_balloons", "title": "Three Balloons",    "lineArt": "LineArt/letters/number_3_balloons.svg", "regionMask": "LineArt/letters/number_3_balloons.mask.png", "thumbnail": "LineArt/letters/number_3_balloons.thumb.png" }
+      ]
+    }
+  ]
+}

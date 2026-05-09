@@ -1,0 +1,64 @@
+name: ColoringBookApp
+options:
+  bundleIdPrefix: com.greedycookie
+  deploymentTarget:
+    iOS: "17.0"
+  developmentLanguage: en
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    IPHONEOS_DEPLOYMENT_TARGET: "17.0"
+    TARGETED_DEVICE_FAMILY: "1,2"      # iPhone + iPad
+    SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    GENERATE_INFOPLIST_FILE: YES
+    INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+    INFOPLIST_KEY_UILaunchScreen_Generation: YES
+    INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown"
+    INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+    INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription: "Save your finished coloring pages to Photos."
+    INFOPLIST_KEY_NSPhotoLibraryUsageDescription: "Pick a photo to use as a coloring background."
+    INFOPLIST_KEY_NSMicrophoneUsageDescription: "Not used. Required by some audio APIs but no audio is recorded."
+    INFOPLIST_KEY_UIRequiresFullScreen: NO
+    INFOPLIST_KEY_LSApplicationCategoryType: "public.app-category.kids-games"
+
+targets:
+  ColoringBookApp:
+    type: application
+    platform: iOS
+    sources:
+      - path: ColoringBookApp
+      - path: Resources
+        type: folder
+    resources:
+      - ColoringBookApp/Content
+      - Resources/Sounds
+      - Resources/Stickers
+      - Resources/PrivacyInfo.xcprivacy
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.greedycookie.coloringbook
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: "1"
+
+  ColoringBookAppTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: ColoringBookAppTests
+    dependencies:
+      - target: ColoringBookApp
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.greedycookie.coloringbook.tests
+
+schemes:
+  ColoringBookApp:
+    build:
+      targets:
+        ColoringBookApp: all
+        ColoringBookAppTests: [test]
+    test:
+      targets:
+        - ColoringBookAppTests
