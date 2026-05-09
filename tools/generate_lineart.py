@@ -6,22 +6,31 @@ Reads ColoringBookApp/Content/categories.json and produces a black-on-white,
 thick-stroke, kid-friendly coloring page for every (category, page) entry that
 does not yet exist on disk.
 
-This is a developer-only tool. It runs OUTSIDE the iOS app. Generated assets
-are committed into the repo under ColoringBookApp/Content/LineArt/<category>/.
+This is a developer-only tool. It runs OUTSIDE the app at runtime. Generated
+assets are committed into the repo under:
+  ColoringBookApp/Content/LineArt/<category>/   (consumed by the iOS app)
+  web/assets/line-art/<category>/                (consumed by the PWA)
 
-The image-gen backend is pluggable. Default is OpenAI Images API (DALL·E 3).
-You can swap in any other API by editing `_backend_request`.
+Both copies are written so the iOS bundle and the GitHub Pages PWA can ship
+the same art without any runtime fetch.
+
+Backends (free first):
+  - pollinations  (DEFAULT, free, no API key, no rate limit signups)
+  - openai        (paid, requires OPENAI_API_KEY)
 
 Usage:
-  export OPENAI_API_KEY=...
   python3 tools/generate_lineart.py
+  python3 tools/generate_lineart.py --backend pollinations
   python3 tools/generate_lineart.py --only heroes,unicorns
   python3 tools/generate_lineart.py --redo dinosaurs/happy_trex
   python3 tools/generate_lineart.py --dry-run
 
 Requires:
-  pip install requests pillow
-  brew install potrace          # for SVG vectorization
+  pip install requests pillow numpy scipy
+  brew install potrace            # vectorization (optional but recommended)
+
+After generating, run:
+  python3 tools/build_region_masks.py
 """
 from __future__ import annotations
 
@@ -32,14 +41,16 @@ import os
 import subprocess
 import sys
 import time
+import shutil
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
+from urllib.parse import quote
 
 try:
     import requests
 except ImportError:
-    requests = None  # tools fail loudly on first network call
+    requests = None
 
 try:
     from PIL import Image, ImageOps
@@ -47,12 +58,10 @@ except ImportError:
     Image = None
 
 REPO = Path(__file__).resolve().parents[1]
-CONTENT = REPO / "ColoringBookApp" / "Content"
-MANIFEST = CONTENT / "categories.json"
-LINEART = CONTENT / "LineArt"
+MANIFEST = REPO / "ColoringBookApp" / "Content" / "categories.json"
+IOS_DIR = REPO / "ColoringBookApp" / "Content" / "LineArt"
+WEB_DIR = REPO / "web" / "assets" / "line-art"
 
-# Fixed style anchor. Keeping this in one place is what makes the whole book
-# look like it was drawn by the same illustrator.
 STYLE_PROMPT = (
     "thick black outline coloring page for toddlers, simple shapes, "
     "no shading, no fill, no color, large closed regions, white background, "
@@ -84,7 +93,8 @@ class PageRef:
     category_id: str
     page_id: str
     page_title: str
-    out_dir: Path
+    ios_dir: Path
+    web_dir: Path
 
 
 def main() -> int:
@@ -98,10 +108,11 @@ def main() -> int:
         print("Nothing to generate.")
         return 0
 
+    print(f"Backend: {args.backend}")
     print(f"Will generate {len(pages)} pages.")
     if args.dry_run:
         for p in pages:
-            print(f"  {p.category_id}/{p.page_id}  ->  {p.out_dir}")
+            print(f"  {p.category_id}/{p.page_id}  ->  {p.ios_dir} + {p.web_dir}")
         return 0
 
     if requests is None or Image is None:
@@ -129,6 +140,8 @@ def _parse_args() -> argparse.Namespace:
     ap.add_argument("--redo", default="", help="Comma-separated category/page ids to force-regenerate")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--size", default="1024x1024")
+    ap.add_argument("--backend", choices=["pollinations", "openai"], default="pollinations",
+                    help="Image-gen backend. 'pollinations' is free and needs no API key.")
     args = ap.parse_args()
     args.only = {s.strip() for s in args.only.split(",") if s.strip()}
     args.redo = {s.strip() for s in args.redo.split(",") if s.strip()}
@@ -141,15 +154,22 @@ def _load_pages(only: set[str]) -> Iterable[PageRef]:
         if only and cat["id"] not in only:
             continue
         for page in cat["pages"]:
-            out = LINEART / cat["id"]
-            yield PageRef(cat["id"], page["id"], page["title"], out)
+            yield PageRef(
+                category_id=cat["id"],
+                page_id=page["id"],
+                page_title=page["title"],
+                ios_dir=IOS_DIR / cat["id"],
+                web_dir=WEB_DIR / cat["id"],
+            )
 
 
 def _generate_one(p: PageRef, args: argparse.Namespace) -> None:
-    p.out_dir.mkdir(parents=True, exist_ok=True)
-    raster_path = p.out_dir / f"{p.page_id}.png"
-    svg_path = p.out_dir / f"{p.page_id}.svg"
-    thumb_path = p.out_dir / f"{p.page_id}.thumb.png"
+    p.ios_dir.mkdir(parents=True, exist_ok=True)
+    p.web_dir.mkdir(parents=True, exist_ok=True)
+
+    raster_path = p.ios_dir / f"{p.page_id}.png"
+    svg_path = p.ios_dir / f"{p.page_id}.svg"
+    thumb_path = p.ios_dir / f"{p.page_id}.thumb.png"
 
     if svg_path.exists() and raster_path.exists() and not args.redo:
         print(f"  SKIP {p.category_id}/{p.page_id} (exists)")
@@ -157,13 +177,14 @@ def _generate_one(p: PageRef, args: argparse.Namespace) -> None:
 
     print(f"  GEN  {p.category_id}/{p.page_id}: {p.page_title}")
     prompt = _build_prompt(p)
-    img_bytes = _backend_request(prompt, args.size)
+    img_bytes = _backend_request(prompt, args)
     raster_path.write_bytes(img_bytes)
 
     _postprocess_to_lineart(raster_path)
     _vectorize_to_svg(raster_path, svg_path)
     _make_thumbnail(raster_path, thumb_path)
-    time.sleep(1.0)  # gentle on the API
+    _mirror_to_web(p, raster_path, svg_path, thumb_path)
+    time.sleep(0.5)
 
 
 def _build_prompt(p: PageRef) -> str:
@@ -171,21 +192,34 @@ def _build_prompt(p: PageRef) -> str:
     return f"{p.page_title} — {hint}. {STYLE_PROMPT}."
 
 
-def _backend_request(prompt: str, size: str) -> bytes:
-    """Default backend: OpenAI Images API. Replace as needed."""
+def _backend_request(prompt: str, args: argparse.Namespace) -> bytes:
+    if args.backend == "pollinations":
+        return _pollinations(prompt, args.size)
+    return _openai(prompt, args.size)
+
+
+def _pollinations(prompt: str, size: str) -> bytes:
+    """Pollinations.ai — free, no API key required.
+    Image is returned as the response body itself.
+    """
+    w, h = (int(x) for x in size.split("x"))
+    url = (
+        f"https://image.pollinations.ai/prompt/{quote(prompt)}"
+        f"?width={w}&height={h}&nologo=true&model=flux&seed=42&safe=true"
+    )
+    resp = requests.get(url, timeout=180)
+    resp.raise_for_status()
+    return resp.content
+
+
+def _openai(prompt: str, size: str) -> bytes:
     api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:
-        raise RuntimeError("OPENAI_API_KEY not set")
+        raise RuntimeError("OPENAI_API_KEY not set (use --backend pollinations for free generation)")
     resp = requests.post(
         "https://api.openai.com/v1/images/generations",
         headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
-        json={
-            "model": "gpt-image-1",
-            "prompt": prompt,
-            "size": size,
-            "n": 1,
-            "background": "white",
-        },
+        json={"model": "gpt-image-1", "prompt": prompt, "size": size, "n": 1, "background": "white"},
         timeout=120,
     )
     resp.raise_for_status()
@@ -195,7 +229,6 @@ def _backend_request(prompt: str, size: str) -> bytes:
 
 
 def _postprocess_to_lineart(path: Path) -> None:
-    """Threshold the raster to pure black-on-white so it's true line-art."""
     img = Image.open(path).convert("L")
     img = ImageOps.autocontrast(img, cutoff=2)
     bw = img.point(lambda v: 0 if v < 160 else 255, mode="1").convert("L")
@@ -203,7 +236,6 @@ def _postprocess_to_lineart(path: Path) -> None:
 
 
 def _vectorize_to_svg(raster: Path, svg_out: Path) -> None:
-    """Run potrace to convert the cleaned raster to SVG."""
     try:
         bmp = raster.with_suffix(".pbm")
         Image.open(raster).convert("1").save(bmp)
@@ -213,7 +245,6 @@ def _vectorize_to_svg(raster: Path, svg_out: Path) -> None:
         )
         bmp.unlink(missing_ok=True)
     except FileNotFoundError:
-        # potrace not installed — keep going with raster only.
         pass
 
 
@@ -221,6 +252,14 @@ def _make_thumbnail(raster: Path, thumb: Path) -> None:
     img = Image.open(raster).convert("RGB")
     img.thumbnail((256, 256))
     img.save(thumb)
+
+
+def _mirror_to_web(p: PageRef, raster: Path, svg: Path, thumb: Path) -> None:
+    """Copy generated assets into web/assets/line-art/<cat>/ for the PWA."""
+    p.web_dir.mkdir(parents=True, exist_ok=True)
+    if raster.exists(): shutil.copy2(raster, p.web_dir / raster.name)
+    if svg.exists():    shutil.copy2(svg,    p.web_dir / svg.name)
+    if thumb.exists():  shutil.copy2(thumb,  p.web_dir / thumb.name)
 
 
 if __name__ == "__main__":

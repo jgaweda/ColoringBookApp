@@ -4,7 +4,9 @@ Greedy Cookie — region mask builder.
 
 For every line-art PNG in ColoringBookApp/Content/LineArt/<category>/, produce
 a paired *.mask.png where each closed white region is filled with a unique RGB.
-This mask is what the iOS app uses to do O(1) tap-to-fill.
+This mask is what both the iOS app and the PWA use to do O(1) tap-to-fill.
+
+Masks are mirrored into web/assets/line-art/<category>/ for the PWA.
 
 Usage:
   pip install pillow numpy scipy
@@ -27,6 +29,7 @@ except ImportError as e:
 
 REPO = Path(__file__).resolve().parents[1]
 LINEART = REPO / "ColoringBookApp" / "Content" / "LineArt"
+WEB_LINEART = REPO / "web" / "assets" / "line-art"
 
 
 def main() -> int:
@@ -56,10 +59,20 @@ def main() -> int:
             continue
         try:
             _build_mask(png, out)
+            _mirror_to_web(png, out)
             print(f"  OK   {png.relative_to(LINEART)}")
         except Exception as e:  # noqa: BLE001
             print(f"  FAIL {png.relative_to(LINEART)}: {e}", file=sys.stderr)
     return 0
+
+
+def _mirror_to_web(line_art_png: Path, mask_png: Path) -> None:
+    import shutil
+    rel = line_art_png.relative_to(LINEART)
+    web_dir = WEB_LINEART / rel.parent
+    web_dir.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(line_art_png, web_dir / line_art_png.name)
+    shutil.copy2(mask_png,     web_dir / mask_png.name)
 
 
 def _build_mask(in_png: Path, out_png: Path) -> None:

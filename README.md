@@ -1,12 +1,34 @@
-# Greedy Cookie — iPad Coloring Book for Kids
+# Greedy Cookie — Coloring Book for Kids
 
-An offline, ad-free, IAP-free SwiftUI coloring book app for toddlers and young
-children, optimized for iPad (Universal — iPhone too). Netflix-Kids-style
-category browser, three coloring modes (tap-to-fill, brush, stickers),
-24-color toddler palette with a 48-color extended palette, audio + voiceover,
-parental gate, accessibility, autosave, and an in-app gallery.
+A toddler-friendly coloring book that ships in two flavors from one repo:
 
-## Quick start
+- **PWA** (`web/`) — installs to the iPad home screen via Safari, runs offline forever after first load. Hosted free on GitHub Pages.
+- **Native iOS app** (`ColoringBookApp/`, `Resources/`) — SwiftUI + PencilKit, optimized for iPad.
+
+Both share the same category catalog, the same region-mask coloring algorithm, the same KidColors palette, and the same asset pipeline.
+
+## Run free, offline, forever (the PWA path)
+
+This is the simplest path for a kids' iPad with **no recurring cost** to anyone:
+
+1. Push this repo to GitHub. The included workflow at `.github/workflows/pages.yml` deploys the contents of `web/` to GitHub Pages on every push to `main`. GitHub Pages is free for public repos.
+2. On the kid's iPad, open the deployed URL in Safari.
+3. Tap **Share → Add to Home Screen**. The icon now launches the app full-screen.
+4. The service worker (`web/sw.js`) precaches every asset on the first visit. From that point on the app runs **fully offline** — the iPad doesn't need a network to color, save, or browse the gallery.
+
+Saved pages live in IndexedDB on the iPad. Settings live in `localStorage`. Nothing is sent anywhere — no analytics, no ads, no logins, no third-party SDKs.
+
+### Local preview
+
+```bash
+cd web
+python3 -m http.server 8000
+# open http://localhost:8000 on your laptop or iPad on the same network
+```
+
+Service workers require HTTPS or `localhost`, so the local server above is enough to test the install flow.
+
+## Quick start (native iOS)
 
 ```bash
 brew install xcodegen
@@ -14,84 +36,87 @@ xcodegen generate
 open ColoringBookApp.xcodeproj
 ```
 
-Build/run for iPad Pro (12.9") simulator. Requires Xcode 15+ / iOS 17 SDK.
+Build/run for iPad Pro (12.9") simulator. Requires Xcode 15+ / iOS 17 SDK. The native build is optional — the PWA covers the same feature set.
 
 ## Architecture
 
-| Layer                 | Where                                                  |
-| --------------------- | ------------------------------------------------------ |
-| App entry / routing   | `ColoringBookApp/ColoringBookApp.swift`, `AppRouter.swift` |
-| Theme tokens / colors | `ColoringBookApp/Theme/`                               |
-| Home (Netflix-style)  | `ColoringBookApp/Features/Home/`                       |
-| Canvas + tools        | `ColoringBookApp/Features/Canvas/`                     |
-| Gallery               | `ColoringBookApp/Features/Gallery/`                    |
-| Settings + parental gate | `ColoringBookApp/Features/Settings/`                |
-| Audio                 | `ColoringBookApp/Audio/`                               |
-| SwiftData + autosave  | `ColoringBookApp/Persistence/`                         |
-| Photos + Share + Print| `ColoringBookApp/Sharing/`                             |
-| Content manifest      | `ColoringBookApp/Content/categories.json`              |
-| Asset pipeline (dev)  | `tools/`                                               |
+| Concern            | PWA                                     | iOS                                                |
+| ------------------ | --------------------------------------- | -------------------------------------------------- |
+| App entry          | `web/js/app.js`                         | `ColoringBookApp/ColoringBookApp.swift`            |
+| Home / browse      | `web/js/views/home.js`                  | `ColoringBookApp/Features/Home/`                   |
+| Canvas             | `web/js/canvas/canvas-view.js`          | `ColoringBookApp/Features/Canvas/CanvasView.swift` |
+| Tap-to-fill core   | `web/js/region-mask.js`                 | `Features/Canvas/RegionMask.swift` + `PaintLayer.swift` |
+| Brush              | `web/js/canvas/brush.js` (Pointer Events) | `PKCanvasView` overlay                           |
+| Stickers           | `web/js/canvas/stickers.js` (emoji)     | `Features/Canvas/StickerSheet.swift`               |
+| Gallery / autosave | `web/js/db.js` (IndexedDB)              | `Persistence/` (SwiftData)                         |
+| Audio              | `web/js/audio.js` (Web Audio + SpeechSynthesis) | `Audio/AudioEngine.swift` + `Voiceover.swift` |
+| Parental gate      | `web/js/views/parental-gate.js`         | `Features/Settings/ParentalGateView.swift`         |
+| Catalog            | `web/data/categories.json`              | `ColoringBookApp/Content/categories.json`          |
 
 ### Coloring algorithm
 
-Each page ships with two raster assets:
+Each page ships with two assets:
 
-- `<page>.svg` (or `.png`) — the black-on-white line art.
-- `<page>.mask.png` — a region label image. Each closed region in the line art
-  is filled with a unique RGB. A tap on the canvas maps to a normalized
-  coordinate, which `RegionMask` (in `ColoringBookApp/Features/Canvas/RegionMask.swift`)
-  resolves to a region label. `PaintLayer` then paints every pixel sharing that
-  label with the active color in O(N) per region (cached). This avoids slow
-  flood-fill on a 4K raster and is what makes the app feel instant on iPad.
+- `<page>.png` (or `.svg`) — black-on-white line art.
+- `<page>.mask.png` — a region label image where each closed region is a unique RGB.
 
-Brush mode uses `PKCanvasView` overlaid above the paint + line-art layers.
-Stickers are SwiftUI views composited on top.
+A tap maps to a normalized (x,y), which the region mask resolves to a label color. The paint layer then recolors every pixel sharing that label in O(N) per region (cached after first hit), giving instant fills even on 4K rasters.
 
-## Generating content
+The PWA uses `ImageData` + `Uint32Array` for the paint buffer; iOS uses a CGContext-backed buffer. Same algorithm.
 
-The app is fully offline at runtime — no AI calls happen on-device. Content is
-generated by a developer pipeline:
+## Generating content (free, no API key)
+
+The PWA and iOS apps are both content-driven: they need ~90 line-art pages plus paired region masks. The pipeline is free by default.
 
 ```bash
 pip install requests pillow numpy scipy
-brew install potrace
-export OPENAI_API_KEY=...           # or modify _backend_request to your provider
+brew install potrace                # optional, for SVG vectorization
 
-python3 tools/generate_lineart.py
+python3 tools/generate_lineart.py            # default backend: Pollinations.ai (free, no key)
 python3 tools/build_region_masks.py
 ```
 
-`generate_lineart.py` reads `ColoringBookApp/Content/categories.json`,
-generates a thick-stroked black-on-white coloring page per entry, post-processes
-to clean line-art, vectorizes via potrace, and writes a thumbnail.
-`build_region_masks.py` produces the paired `*.mask.png` for tap-to-fill.
+`generate_lineart.py` writes generated art to **both** `ColoringBookApp/Content/LineArt/<cat>/` (for iOS) and `web/assets/line-art/<cat>/` (for the PWA). `build_region_masks.py` writes paired `*.mask.png` to both locations. Once committed, the apps are fully self-contained.
 
-Re-run with `--only heroes,unicorns` to scope, or `--redo heroes/caped_kid` to
-force regeneration of a specific page.
+Backends:
 
-Until art is generated, the app falls back to a `LineArtRenderer.placeholderLineArt`
-so the canvas remains usable for development.
+- `--backend pollinations` (default) — free, no API key, no signup. Uses `image.pollinations.ai`.
+- `--backend openai` — paid; requires `OPENAI_API_KEY`.
 
-## App Store Kids review
+If you don't generate anything, both apps still work — they fall back to a programmatic placeholder so the coloring canvas remains usable for development.
 
-- No third-party SDKs, no network at runtime, no analytics.
-- `Resources/PrivacyInfo.xcprivacy` declares no tracking and only the API
-  reasons we actually use (UserDefaults, file timestamps, disk space).
-- Parental gate (hold a number for 2 seconds) guards Settings, Share, and Print.
+## Categories
+
+15 categories, ~6 pages each = 90 pages at launch. Driven by `categories.json` (single source of truth, copied to `web/data/`). All characters are original archetypes — no licensed IP (Spider-Man, Paw Patrol, etc.) — to avoid App Store rejection and DMCA risk.
+
+1. Caped Heroes  2. Princesses & Princes  3. Unicorns  4. Dinosaurs
+5. Butterflies & Bugs  6. Dragons & Wizards  7. Space & Rockets
+8. Under the Sea  9. Jungle & Safari  10. Farm & Pets
+11. Vehicles  12. Robots & Monsters  13. Holidays & Seasons
+14. Sweets & Food  15. Letters & Numbers
+
+## Privacy
+
+- **PWA**: nothing leaves the device. All data (gallery, autosave, settings) is local.
+- **iOS**: `Resources/PrivacyInfo.xcprivacy` declares no tracking and only the API reasons we actually use.
+- **Parental gate** (hold a number for 2 seconds) guards Settings, Share, and Delete on both.
 
 ## Tests
+
+PWA: open `web/index.html` and walk the verification checklist (color a page, save, force-quit, reopen, settings).
+
+iOS:
 
 ```bash
 xcodebuild test -scheme ColoringBookApp \
   -destination 'platform=iOS Simulator,name=iPad Pro (12.9-inch) (6th generation)'
 ```
 
-Unit tests live in `ColoringBookAppTests/` and cover region mask lookup,
-manifest decoding, autosaver round-trip, and undo stack mixing.
+Unit tests in `ColoringBookAppTests/` cover region mask lookup, manifest decoding, autosaver round-trip, and undo stack mixing.
 
 ## Out of scope (v1)
 
 - iCloud sync, IAP, subscriptions
-- Licensed IP (Spider-Man, Paw Patrol, etc.) — original archetypes only
+- Licensed IP packs
 - On-device AI generation
 - Multi-user profiles

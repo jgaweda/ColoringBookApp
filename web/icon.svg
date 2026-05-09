@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Greedy Cookie">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="40%" r="70%">
+      <stop offset="0%" stop-color="#FFE9F4"/>
+      <stop offset="100%" stop-color="#5856D6"/>
+    </radialGradient>
+    <radialGradient id="cookie" cx="40%" cy="35%" r="70%">
+      <stop offset="0%" stop-color="#FFE0A6"/>
+      <stop offset="60%" stop-color="#D4A26A"/>
+      <stop offset="100%" stop-color="#8B5E2F"/>
+    </radialGradient>
+  </defs>
+  <!-- Background tile -->
+  <rect x="0" y="0" width="512" height="512" rx="96" fill="url(#bg)"/>
+  <!-- Confetti -->
+  <g opacity="0.85">
+    <circle cx="80"  cy="100" r="10" fill="#FF3B30"/>
+    <circle cx="430" cy="80"  r="12" fill="#FFCC00"/>
+    <circle cx="60"  cy="380" r="14" fill="#34C759"/>
+    <circle cx="450" cy="420" r="10" fill="#FF9500"/>
+    <circle cx="120" cy="430" r="8"  fill="#AF52DE"/>
+  </g>
+  <!-- Cookie -->
+  <g transform="translate(256 270)">
+    <circle r="170" fill="url(#cookie)" stroke="#5C3A14" stroke-width="6"/>
+    <!-- chocolate chips -->
+    <g fill="#3A1E0A">
+      <circle cx="-70" cy="-50" r="22"/>
+      <circle cx="40"  cy="-70" r="18"/>
+      <circle cx="80"  cy="20"  r="20"/>
+      <circle cx="-30" cy="60"  r="16"/>
+      <circle cx="-90" cy="30"  r="14"/>
+      <circle cx="20"  cy="80"  r="18"/>
+    </g>
+    <!-- bite -->
+    <path d="M 130 -110 a 80 80 0 0 1 30 130 a 60 60 0 0 0 -90 -90 a 80 80 0 0 1 60 -40 z" fill="url(#bg)"/>
+    <!-- happy face -->
+    <g transform="translate(-30 -10)">
+      <ellipse cx="-30" cy="0" rx="9" ry="14" fill="#1C1C1E"/>
+      <ellipse cx="30"  cy="0" rx="9" ry="14" fill="#1C1C1E"/>
+      <path d="M -34 36 Q 0 70 34 36" stroke="#1C1C1E" stroke-width="9" fill="none" stroke-linecap="round"/>
+    </g>
+  </g>
+  <!-- Brush -->
+  <g transform="translate(370 380) rotate(-30)">
+    <rect x="-12" y="-90" width="24" height="120" fill="#34C759" rx="8"/>
+    <rect x="-16" y="20" width="32" height="40" fill="#FFD700" rx="6"/>
+    <path d="M -18 56 Q 0 90 18 56 Z" fill="#FF3B30"/>
+  </g>
+</svg>
