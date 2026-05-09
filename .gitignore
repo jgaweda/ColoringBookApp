@@ -1,0 +1,27 @@
+# Xcode
+build/
+DerivedData/
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata
+xcuserdata/
+*.xcuserstate
+*.xcworkspace
+.swiftpm/
+
+# CocoaPods / SPM
+Pods/
+.build/
+Package.resolved
+
+# macOS
+.DS_Store
+
+# Python (asset pipeline)
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Generated raster intermediates from the asset pipeline
+ColoringBookApp/Content/LineArt/**/*.pbm
