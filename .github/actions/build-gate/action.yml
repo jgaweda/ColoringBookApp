@@ -1,0 +1,111 @@
+name: Build gate
+description: |
+  Skip the current run if (a) another run of this workflow is already in
+  progress or queued on this branch, or (b) the previous real (non-gated)
+  run on this branch failed.
+
+  Outputs `should_run` ("true" or "false"). Downstream jobs should gate on:
+    if: needs.gate.outputs.should_run == 'true'
+
+  Manual `workflow_dispatch` runs always bypass the failure-halt so you can
+  recover after fixing the underlying issue.
+
+  Requires the calling workflow to declare:
+    permissions:
+      actions: read
+      contents: read
+
+inputs:
+  gate-job-name:
+    description: Name of the gate job in this workflow (used to skip past previously-gated runs when checking for the last real conclusion).
+    required: false
+    default: Gate
+
+outputs:
+  should_run:
+    description: '"true" if the workflow should proceed, "false" if it should skip.'
+    value: ${{ steps.decide.outputs.should_run }}
+
+runs:
+  using: composite
+  steps:
+    - name: Decide whether to run
+      id: decide
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+        REPO: ${{ github.repository }}
+        BRANCH: ${{ github.ref_name }}
+        WORKFLOW: ${{ github.workflow }}
+        RUN_ID: ${{ github.run_id }}
+        EVENT: ${{ github.event_name }}
+        GATE_JOB_NAME: ${{ inputs.gate-job-name }}
+      run: |
+        python3 - <<'PY'
+        import json, os, subprocess, sys
+
+        REPO = os.environ["REPO"]
+        BRANCH = os.environ["BRANCH"]
+        WORKFLOW = os.environ["WORKFLOW"]
+        RUN_ID = int(os.environ["RUN_ID"])
+        EVENT = os.environ["EVENT"]
+        GATE = os.environ["GATE_JOB_NAME"]
+
+        def gh(path):
+            return json.loads(subprocess.check_output(["gh", "api", path]))
+
+        def output(line):
+            with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+                f.write(line + "\n")
+
+        def skip(reason):
+            print(f"::warning::{reason}")
+            print(f"::notice::Skipping this build: {reason}")
+            output("should_run=false")
+            sys.exit(0)
+
+        runs = gh(f"repos/{REPO}/actions/runs?branch={BRANCH}&per_page=100").get("workflow_runs", [])
+        peers = [r for r in runs if r.get("name") == WORKFLOW and r.get("id") != RUN_ID]
+
+        # 1) Skip if another run of this workflow is in progress or queued.
+        busy = [r for r in peers if r.get("status") in ("in_progress", "queued")]
+        if busy:
+            ids = ", ".join(str(r["id"]) for r in busy[:3])
+            skip(
+                f"Another '{WORKFLOW}' run on '{BRANCH}' is already in progress "
+                f"(run_ids: {ids}). New builds are not allowed to start while one is going."
+            )
+
+        # 2) Halt-on-failure: skip if the most recent real run (one whose non-gate
+        #    jobs actually executed) failed. workflow_dispatch always bypasses
+        #    so you can recover after fixing the issue.
+        if EVENT == "workflow_dispatch":
+            print("::notice::workflow_dispatch — bypassing failure-halt check.")
+            output("should_run=true")
+            sys.exit(0)
+
+        completed = sorted(
+            [r for r in peers if r.get("status") == "completed"],
+            key=lambda r: r.get("created_at", ""),
+            reverse=True,
+        )
+        for r in completed:
+            jobs = gh(f"repos/{REPO}/actions/runs/{r['id']}/jobs").get("jobs", [])
+            non_gate = [j for j in jobs if j.get("name") != GATE]
+            # If this run was itself fully gated (every non-gate job skipped),
+            # it doesn't represent a real attempt — keep looking back.
+            if not non_gate or all(j.get("conclusion") == "skipped" for j in non_gate):
+                continue
+            concl = r.get("conclusion")
+            if concl in ("failure", "timed_out", "startup_failure"):
+                skip(
+                    f"Most recent real '{WORKFLOW}' run on '{BRANCH}' ended with "
+                    f"conclusion={concl} (run_id={r['id']}). Halting auto-builds — "
+                    f"investigate the failure, then click 'Run workflow' (workflow_dispatch) "
+                    f"to unblock once it's fixed."
+                )
+            break  # last real run was successful → continue normally
+
+        print("::notice::Gate passed — no in-progress run, last real run was healthy.")
+        output("should_run=true")
+        PY

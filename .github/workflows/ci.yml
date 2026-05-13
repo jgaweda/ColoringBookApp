@@ -4,10 +4,34 @@ on:
   push:
     branches: ["**"]
   pull_request:
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+# Backstop in case the gate misses a race: if two pushes arrive within the
+# same second and both pass the gate, only the latest one runs and the older
+# is cancelled instead of both running in parallel.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
+  gate:
+    name: Gate
+    runs-on: ubuntu-latest
+    outputs:
+      should_run: ${{ steps.gate.outputs.should_run }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: gate
+        uses: ./.github/actions/build-gate
+
   pwa:
     name: PWA syntax + imports
+    needs: gate
+    if: needs.gate.outputs.should_run == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
