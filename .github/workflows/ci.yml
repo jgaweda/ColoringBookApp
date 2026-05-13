@@ -51,3 +51,18 @@ jobs:
                           fails += 1
           sys.exit(fails)
           PY
+
+      - name: Install Playwright + Chromium
+        run: |
+          cd web
+          npm init -y >/dev/null
+          npm install --no-save --silent playwright
+          npx playwright install --with-deps chromium
+
+      - name: Smoke test (Playwright)
+        run: |
+          cd web
+          python3 -m http.server 8765 >/tmp/serve.log 2>&1 &
+          sleep 2
+          URL=http://127.0.0.1:8765/ node tests/smoke.mjs
+          kill %1 2>/dev/null || true
