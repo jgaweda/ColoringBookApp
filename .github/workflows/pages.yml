@@ -9,7 +9,7 @@ on:
 
 permissions:
   actions: read
-  contents: write    # the build step writes a diagnostic to a debug branch on Pages-enable failure
+  contents: read
   pages: write
   id-token: write
 
@@ -52,78 +52,40 @@ jobs:
           rsvg-convert -w 180 -h 180 icon.svg          -o apple-touch-icon.png
           rsvg-convert -w  32 -h  32 icon.svg          -o favicon-32.png
 
-      - name: Ensure GitHub Pages is enabled
-        id: enable_pages
+      # GitHub Pages must be enabled manually in repo Settings once before this
+      # workflow can deploy. The workflow's GITHUB_TOKEN cannot create the Pages
+      # site itself — the create-pages-site endpoint returns 403 "Resource not
+      # accessible by integration" because it requires the `administration`
+      # scope, which Actions tokens never carry, even with `pages: write`.
+      #
+      # If you see "Get Pages site failed" below, do this one-time fix:
+      #   Settings -> Pages -> Source -> GitHub Actions -> Save
+      #   https://github.com/${{ github.repository }}/settings/pages
+      - name: Preflight (Pages must be enabled in repo Settings)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
-          RUN_ID: ${{ github.run_id }}
         run: |
-          set -u
-          mkdir -p /tmp/diag
-          LOG=/tmp/diag/full.log
-          : >"$LOG"
-          { echo "Pages enablement attempt at $(date -u)"; echo "Repo: $REPO"; echo; } | tee -a "$LOG"
-
-          probe() {
-            local method=$1 body=$2 expect=$3 outfile
-            outfile=/tmp/diag/${method}.body
-            local status
-            status=$(curl -sS -o "$outfile" -w "%{http_code}" \
-              -X "$method" \
-              -H "Authorization: Bearer $GH_TOKEN" \
-              -H "Accept: application/vnd.github+json" \
-              -H "X-GitHub-Api-Version: 2022-11-28" \
-              ${body:+-d "$body"} \
-              "https://api.github.com/repos/$REPO/pages")
-            {
-              echo "=== $method /repos/$REPO/pages ==="
-              echo "HTTP $status"
-              cat "$outfile"
-              echo
-            } | tee -a "$LOG"
-            [ "$status" = "$expect" ]
-          }
-
-          if probe GET ""                      200; then
-            echo "::notice::Pages already enabled."
+          status=$(curl -sS -o /dev/null -w "%{http_code}" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$REPO/pages")
+          if [ "$status" = "200" ]; then
+            echo "::notice::Pages enabled — proceeding."
             exit 0
           fi
-          if probe POST '{"build_type":"workflow"}' 201; then
-            echo "::notice::Pages enabled (POST 201)."
-            exit 0
-          fi
-          if probe PUT  '{"build_type":"workflow"}' 204; then
-            echo "::notice::Pages source updated to workflow (PUT 204)."
-            exit 0
-          fi
+          cat <<EOF
+          ::error::GitHub Pages is not enabled on this repo (API returned HTTP $status).
 
-          # All three failed — persist the diagnostic to a side branch so the
-          # exact API response bodies can be read without admin token access.
-          {
-            echo
-            echo "Pages could not be auto-enabled. Manual fix:"
-            echo "  Settings -> Pages -> Source -> GitHub Actions -> Save"
-            echo "  https://github.com/${REPO}/settings/pages"
-            echo "Then re-run this workflow."
-          } | tee -a "$LOG"
+          One-time manual fix — takes 10 seconds:
+            1. Open: https://github.com/$REPO/settings/pages
+            2. Under 'Build and deployment', set 'Source' to 'GitHub Actions'.
+            3. Click 'Save'.
+            4. Re-run this workflow from the Actions tab.
 
-          set +e
-          git config --global user.email "ci@noreply"
-          git config --global user.name  "pages-ci-debug"
-          rm -rf /tmp/debug-work
-          git clone --depth 1 "https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git" /tmp/debug-work
-          cd /tmp/debug-work || true
-          git checkout --orphan _pages-debug 2>/dev/null
-          git rm -rf --cached . 2>/dev/null
-          find . -maxdepth 1 -mindepth 1 ! -name '.git' -exec rm -rf {} +
-          cp "$LOG" ./pages-enable-failure.log
-          echo "run_id=$RUN_ID" > run.txt
-          git add -A
-          git commit -m "diag: Pages enable failure from run $RUN_ID" 2>&1 | tail -3
-          git push -f origin _pages-debug 2>&1 | tail -3
-
-          echo "::error::Pages enablement failed. The API responses are in branch '_pages-debug/pages-enable-failure.log', or enable Pages manually at https://github.com/${REPO}/settings/pages (Source: GitHub Actions)."
+          (The Actions GITHUB_TOKEN cannot enable Pages itself — that endpoint
+          requires repo administration scope which workflow tokens never carry.)
+          EOF
           exit 1
 
       - name: Setup Pages

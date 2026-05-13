@@ -19,7 +19,7 @@ This is the simplest path for a kids' iPad with **no recurring cost** to anyone.
 **One-time setup on your computer:**
 
 1. Push this repo to your GitHub account.
-2. In repo Settings → **Pages**, set **Source: GitHub Actions**.
+2. In repo **Settings → Pages**, set **Source = "GitHub Actions"** and click **Save**. This step is required — the workflow's `GITHUB_TOKEN` is not allowed to create a Pages site programmatically (it returns "Resource not accessible by integration" with HTTP 403), so the first enablement must be manual.
 3. Push to `main` (or run **Actions → Deploy PWA → Run workflow** from any branch). The workflow at `.github/workflows/pages.yml` rasterizes the icons and publishes `web/` to GitHub Pages. GitHub Pages is free for public repos.
 4. The job prints the live URL — usually `https://<username>.github.io/coloringbookapp/`.
 
