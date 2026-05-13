@@ -7,6 +7,7 @@ import { mountPagePickerView } from "./views/picker.js";
 import { mountGalleryView } from "./views/gallery.js";
 import { mountSettingsView } from "./views/settings.js";
 import { mountCanvasView } from "./canvas/canvas-view.js";
+import { maybeShowInstallHint } from "./install-hint.js";
 
 const app = document.getElementById("app");
 let categories = [];
@@ -78,6 +79,7 @@ window.addEventListener("keydown", unlockOnce, { once: true });
     if (r === "gallery") routes.gallery();
     else if (r === "settings") routes.settings();
     else routes.home();
+    maybeShowInstallHint();
   } catch (e) {
     app.innerHTML = `<div style="padding:32px;text-align:center;">
       <h2>Something went wrong</h2>

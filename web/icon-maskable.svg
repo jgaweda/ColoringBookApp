@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Greedy Cookie">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="40%" r="80%">
+      <stop offset="0%" stop-color="#FFE9F4"/>
+      <stop offset="100%" stop-color="#5856D6"/>
+    </radialGradient>
+    <radialGradient id="cookie" cx="40%" cy="35%" r="70%">
+      <stop offset="0%" stop-color="#FFE0A6"/>
+      <stop offset="60%" stop-color="#D4A26A"/>
+      <stop offset="100%" stop-color="#8B5E2F"/>
+    </radialGradient>
+  </defs>
+  <!-- Full-bleed background so adaptive masks (circle, squircle, rounded square) all look right -->
+  <rect x="0" y="0" width="512" height="512" fill="url(#bg)"/>
+  <!-- Inner content shrunk into the 80% safe zone (centered, 410x410) -->
+  <g transform="translate(51 51) scale(0.8)">
+    <g transform="translate(256 270)">
+      <circle r="170" fill="url(#cookie)" stroke="#5C3A14" stroke-width="6"/>
+      <g fill="#3A1E0A">
+        <circle cx="-70" cy="-50" r="22"/>
+        <circle cx="40"  cy="-70" r="18"/>
+        <circle cx="80"  cy="20"  r="20"/>
+        <circle cx="-30" cy="60"  r="16"/>
+      </g>
+      <g transform="translate(-30 -10)">
+        <ellipse cx="-30" cy="0" rx="9" ry="14" fill="#1C1C1E"/>
+        <ellipse cx="30"  cy="0" rx="9" ry="14" fill="#1C1C1E"/>
+        <path d="M -34 36 Q 0 70 34 36" stroke="#1C1C1E" stroke-width="9" fill="none" stroke-linecap="round"/>
+      </g>
+    </g>
+  </g>
+</svg>
