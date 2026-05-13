@@ -236,16 +236,18 @@ def _postprocess_to_lineart(path: Path) -> None:
 
 
 def _vectorize_to_svg(raster: Path, svg_out: Path) -> None:
+    bmp = raster.with_suffix(".pbm")
     try:
-        bmp = raster.with_suffix(".pbm")
         Image.open(raster).convert("1").save(bmp)
         subprocess.run(
             ["potrace", str(bmp), "-s", "-o", str(svg_out), "--turdsize", "20"],
             check=True,
         )
-        bmp.unlink(missing_ok=True)
-    except FileNotFoundError:
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        # potrace is optional — the iOS/PWA apps render the raster directly.
         pass
+    finally:
+        bmp.unlink(missing_ok=True)
 
 
 def _make_thumbnail(raster: Path, thumb: Path) -> None:

@@ -25,3 +25,4 @@ venv/
 
 # Generated raster intermediates from the asset pipeline
 ColoringBookApp/Content/LineArt/**/*.pbm
+web/assets/line-art/**/*.pbm
