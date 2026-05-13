@@ -9,7 +9,7 @@ on:
 
 permissions:
   actions: read
-  contents: read
+  contents: write    # the build step writes a diagnostic to a debug branch on Pages-enable failure
   pages: write
   id-token: write
 
@@ -52,53 +52,65 @@ jobs:
           rsvg-convert -w 180 -h 180 icon.svg          -o apple-touch-icon.png
           rsvg-convert -w  32 -h  32 icon.svg          -o favicon-32.png
 
-      - name: Ensure GitHub Pages is enabled (idempotent, surfaces real errors)
+      - name: Ensure GitHub Pages is enabled
+        id: enable_pages
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
         run: |
           set +e
-          # Probe current state — non-200 means not enabled.
-          status=$(curl -sS -o /tmp/pages.json -w "%{http_code}" \
-            -H "Authorization: Bearer $GH_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/$REPO/pages")
-          echo "GET /repos/$REPO/pages -> $status"
-          cat /tmp/pages.json
-          if [ "$status" = "200" ]; then
-            echo "::notice::Pages already enabled."
-            exit 0
-          fi
+          mkdir -p /tmp/diag
+          {
+            echo "Pages enablement attempt at $(date -u)"
+            echo "Repo: $REPO"
+            echo ""
+            for method in GET POST PUT; do
+              body=''
+              [ "$method" = "POST" ] && body='-d {"build_type":"workflow"}'
+              [ "$method" = "PUT"  ] && body='-d {"build_type":"workflow"}'
+              echo "=== $method /repos/$REPO/pages ==="
+              status=$(curl -sS -o /tmp/diag/$method.body -w "%{http_code}" \
+                -X $method \
+                -H "Authorization: Bearer $GH_TOKEN" \
+                -H "Accept: application/vnd.github+json" \
+                -H "X-GitHub-Api-Version: 2022-11-28" \
+                $body \
+                "https://api.github.com/repos/$REPO/pages")
+              echo "HTTP $status"
+              cat /tmp/diag/$method.body
+              echo ""
+              # 200 on GET = already enabled (success)
+              # 201 on POST = newly enabled (success)
+              # 204 on PUT = source updated (success)
+              if [ "$method$status" = "GET200" ] || [ "$method$status" = "POST201" ] || [ "$method$status" = "PUT204" ]; then
+                echo "::notice::Pages OK after $method ($status)"
+                exit 0
+              fi
+            done
+            echo ""
+            echo "Pages could not be auto-enabled. Most likely cause:"
+            echo "  the GITHUB_TOKEN for this workflow does not have administration"
+            echo "  rights to create a Pages site. Manually enable Pages once:"
+            echo "    Settings -> Pages -> Source = GitHub Actions"
+            echo "  Then re-run this workflow."
+          } 2>&1 | tee /tmp/diag/full.log
 
-          # Try to enable Pages with build_type=workflow.
-          create_status=$(curl -sS -o /tmp/create.json -w "%{http_code}" \
-            -X POST \
-            -H "Authorization: Bearer $GH_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/$REPO/pages" \
-            -d '{"build_type":"workflow"}')
-          echo "POST /repos/$REPO/pages -> $create_status"
-          cat /tmp/create.json
-          if [ "$create_status" = "201" ] || [ "$create_status" = "204" ]; then
-            echo "::notice::Pages enabled successfully."
-            exit 0
-          fi
-
-          # Fall back to switching the source on an already-existing site.
-          patch_status=$(curl -sS -o /tmp/patch.json -w "%{http_code}" \
-            -X PUT \
-            -H "Authorization: Bearer $GH_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/$REPO/pages" \
-            -d '{"build_type":"workflow"}')
-          echo "PUT /repos/$REPO/pages -> $patch_status"
-          cat /tmp/patch.json
-          if [ "$patch_status" = "204" ]; then
-            echo "::notice::Pages source updated to GitHub Actions."
-            exit 0
-          fi
-
-          echo "::error::Could not enable GitHub Pages automatically. Open the repo Settings -> Pages and set Source to 'GitHub Actions', then re-run this workflow."
+          # Capture the diagnostic on a side branch so it can be inspected
+          # without admin-token access to workflow logs.
+          git config user.email "ci@noreply"
+          git config user.name "pages-ci-debug"
+          rm -rf /tmp/debug-work
+          git clone --depth 1 "https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git" /tmp/debug-work
+          cd /tmp/debug-work
+          git checkout --orphan _pages-debug 2>/dev/null || git checkout _pages-debug
+          git rm -rf --cached . 2>/dev/null || true
+          rm -rf -- *
+          cp /tmp/diag/full.log ./pages-enable-failure.log
+          echo "Run: ${{ github.run_id }}" > run.txt
+          git add -A
+          git commit -m "diag: Pages enable failure from run ${{ github.run_id }}" >/dev/null
+          git push -f origin _pages-debug
+          echo "::error::Pages enablement failed. See branch '_pages-debug/pages-enable-failure.log' for the API response bodies, or enable Pages manually at https://github.com/${REPO}/settings/pages (Source: GitHub Actions)."
           exit 1
 
       - name: Setup Pages
