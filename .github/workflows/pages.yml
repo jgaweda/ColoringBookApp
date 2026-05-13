@@ -54,6 +54,11 @@ jobs:
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
+        with:
+          # First-run self-enable: if the repo doesn't have Pages configured
+          # yet, the action will turn it on (source = GitHub Actions). Without
+          # this, the action 404s and the whole deploy fails.
+          enablement: true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
