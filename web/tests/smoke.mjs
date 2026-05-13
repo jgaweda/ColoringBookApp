@@ -58,18 +58,29 @@ const URL = process.env.URL || "http://127.0.0.1:8765/";
   assert("3 canvases mounted", dims.length === 3, `got ${dims.length}`);
   assert("canvases sized", dims.every((d) => d.w > 0 && d.h > 0), JSON.stringify(dims));
 
-  // Bucket-fill: tap inside the page, verify a pixel was painted.
+  // Bucket-fill: try several tap points so the test isn't flaky against
+  // images where the obvious center happens to be a line-art pixel.
   const stage = await page.$(".stage");
   const box = await stage.boundingBox();
-  await page.mouse.click(box.x + box.width * 0.5, box.y + box.height * 0.45);
-  await page.waitForTimeout(300);
-  const filled = await page.evaluate(() => {
-    const c = document.querySelector(".stage canvas.paint");
-    const ctx = c.getContext("2d");
-    const d = ctx.getImageData(0, 0, c.width, c.height).data;
-    for (let i = 3; i < d.length; i += 4) if (d[i] > 0) return true;
-    return false;
-  });
+  const taps = [
+    [0.05, 0.05],  // background corner — the catch-all
+    [0.5, 0.5],
+    [0.25, 0.75],
+    [0.85, 0.15],
+  ];
+  let filled = false;
+  for (const [tx, ty] of taps) {
+    await page.mouse.click(box.x + box.width * tx, box.y + box.height * ty);
+    await page.waitForTimeout(150);
+    filled = await page.evaluate(() => {
+      const c = document.querySelector(".stage canvas.paint");
+      const ctx = c.getContext("2d");
+      const d = ctx.getImageData(0, 0, c.width, c.height).data;
+      for (let i = 3; i < d.length; i += 4) if (d[i] > 0) return true;
+      return false;
+    });
+    if (filled) break;
+  }
   assert("bucket-fill painted at least one pixel", filled);
 
   // Brush mode: drag a stroke, verify pixels and undo state.

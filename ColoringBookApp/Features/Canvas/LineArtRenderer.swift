@@ -11,11 +11,14 @@ enum LineArtRenderer {
             .replacingOccurrences(of: ".png", with: "")
         if let img = UIImage(named: assetName) { return img }
 
-        // Then resolve from the Content folder reference inside the bundle.
-        if let url = Bundle.main.url(forResource: bundlePath, withExtension: nil),
-           let data = try? Data(contentsOf: url),
-           let img = UIImage(data: data) {
-            return img
+        // Then try the catalog-declared path, then a .png fallback so the
+        // same manifest works whether the asset pipeline produced SVG or PNG.
+        for candidate in [bundlePath, bundlePath.replacingOccurrences(of: ".svg", with: ".png")] {
+            if let url = Bundle.main.url(forResource: candidate, withExtension: nil),
+               let data = try? Data(contentsOf: url),
+               let img = UIImage(data: data) {
+                return img
+            }
         }
         return nil
     }

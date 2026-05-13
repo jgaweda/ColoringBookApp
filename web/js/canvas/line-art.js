@@ -10,11 +10,15 @@ const PAGE_H = 1024;
  * Returns { lineArt: HTMLImageElement | HTMLCanvasElement, mask: ImageData, w, h }.
  */
 export async function loadPageAssets(page) {
-  const lineArtUrl = `./assets/line-art/${page.lineArt.replace("LineArt/", "")}`;
-  const maskUrl = `./assets/line-art/${page.regionMask.replace("LineArt/", "")}`;
+  // Try the catalog-declared paths first, then fall back to a `.png` swap so
+  // the same catalog works whether the asset pipeline produced SVG or only PNG.
+  const lineArtBase = `./assets/line-art/${page.lineArt.replace("LineArt/", "")}`;
+  const maskBase    = `./assets/line-art/${page.regionMask.replace("LineArt/", "")}`;
+  const lineArtCandidates = uniqueWithPngFallback(lineArtBase);
+  const maskCandidates    = uniqueWithPngFallback(maskBase);
 
-  const realLineArt = await loadImage(lineArtUrl).catch(() => null);
-  const realMask    = await loadImage(maskUrl).catch(() => null);
+  const realLineArt = await loadFirstImage(lineArtCandidates);
+  const realMask    = await loadFirstImage(maskCandidates);
 
   if (realLineArt && realMask) {
     const mask = imageToImageData(realMask);
@@ -27,6 +31,19 @@ export async function loadPageAssets(page) {
   const maskCanvas    = renderProcedural(seed, "mask");
   const mask          = canvasToImageData(maskCanvas);
   return { lineArt: lineArtCanvas, mask, w: PAGE_W, h: PAGE_H };
+}
+
+function uniqueWithPngFallback(url) {
+  const png = url.replace(/\.svg(\?|$)/, ".png$1");
+  return Array.from(new Set([url, png]));
+}
+
+async function loadFirstImage(urls) {
+  for (const u of urls) {
+    const img = await loadImage(u).catch(() => null);
+    if (img) return img;
+  }
+  return null;
 }
 
 function loadImage(url) {

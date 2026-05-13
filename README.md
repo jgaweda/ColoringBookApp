@@ -1,11 +1,16 @@
 # Greedy Cookie — Coloring Book for Kids
 
+[![CI](https://github.com/jgaweda/coloringbookapp/actions/workflows/ci.yml/badge.svg)](https://github.com/jgaweda/coloringbookapp/actions/workflows/ci.yml)
+[![Deploy](https://github.com/jgaweda/coloringbookapp/actions/workflows/pages.yml/badge.svg)](https://github.com/jgaweda/coloringbookapp/actions/workflows/pages.yml)
+
 A toddler-friendly coloring book that ships in two flavors from one repo:
 
 - **PWA** (`web/`) — installs to the iPad home screen via Safari, runs offline forever after first load. Hosted free on GitHub Pages.
 - **Native iOS app** (`ColoringBookApp/`, `Resources/`) — SwiftUI + PencilKit, optimized for iPad.
 
 Both share the same category catalog, the same region-mask coloring algorithm, the same KidColors palette, and the same asset pipeline.
+
+> **Status:** PWA is end-to-end working, smoke-tested in CI (Playwright/Chromium asserts canvases mount, bucket-fill paints pixels, brush draws, undo enables). The unicorns category ships with real free-generated art (Pollinations.ai) as a working sample; run `python3 tools/generate_lineart.py` to fill the remaining 14 categories the same way.
 
 ## Run free, offline, forever (the PWA path)
 
