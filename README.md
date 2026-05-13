@@ -14,14 +14,27 @@ Both share the same category catalog, the same region-mask coloring algorithm, t
 
 ## Run free, offline, forever (the PWA path)
 
-This is the simplest path for a kids' iPad with **no recurring cost** to anyone:
+This is the simplest path for a kids' iPad with **no recurring cost** to anyone.
 
-1. Push this repo to GitHub. The included workflow at `.github/workflows/pages.yml` deploys the contents of `web/` to GitHub Pages on every push to `main`. GitHub Pages is free for public repos.
-2. On the kid's iPad, open the deployed URL in Safari.
-3. Tap **Share → Add to Home Screen**. The icon now launches the app full-screen.
-4. The service worker (`web/sw.js`) precaches every asset on the first visit. From that point on the app runs **fully offline** — the iPad doesn't need a network to color, save, or browse the gallery.
+**One-time setup on your computer:**
 
-Saved pages live in IndexedDB on the iPad. Settings live in `localStorage`. Nothing is sent anywhere — no analytics, no ads, no logins, no third-party SDKs.
+1. Push this repo to your GitHub account.
+2. In repo Settings → **Pages**, set **Source: GitHub Actions**.
+3. Push to `main` (or run **Actions → Deploy PWA → Run workflow** from any branch). The workflow at `.github/workflows/pages.yml` rasterizes the icons and publishes `web/` to GitHub Pages. GitHub Pages is free for public repos.
+4. The job prints the live URL — usually `https://<username>.github.io/coloringbookapp/`.
+
+**On the kid's iPad (one-time):**
+
+1. Open the URL above in **Safari** (not Chrome — only Safari can install PWAs on iPad).
+2. Tap **Share → Add to Home Screen → Add**. A "Greedy Cookie" icon now appears on the home screen.
+3. Open the app from the home icon once while on Wi-Fi. The service worker precaches every asset.
+
+**From then on:**
+
+- The icon launches a full-screen app with no Safari chrome.
+- The iPad **does not need a network** to color, save, or browse the gallery.
+- Saved pages live in IndexedDB on the iPad. Settings live in `localStorage`. Nothing leaves the device — no analytics, no ads, no logins, no third-party SDKs.
+- Recurring cost to you and the kid: **$0**.
 
 ### Local preview
 
