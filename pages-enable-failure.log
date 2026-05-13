@@ -1,0 +1,32 @@
+Pages enablement attempt at Wed May 13 03:17:49 UTC 2026
+Repo: jgaweda/ColoringBookApp
+
+=== GET /repos/jgaweda/ColoringBookApp/pages ===
+HTTP 404
+{
+  "message": "Not Found",
+  "documentation_url": "https://docs.github.com/rest/pages/pages#get-a-apiname-pages-site",
+  "status": "404"
+}
+
+=== POST /repos/jgaweda/ColoringBookApp/pages ===
+HTTP 403
+{
+  "message": "Resource not accessible by integration",
+  "documentation_url": "https://docs.github.com/rest/pages/pages#create-a-apiname-pages-site",
+  "status": "403"
+}
+
+=== PUT /repos/jgaweda/ColoringBookApp/pages ===
+HTTP 403
+{
+  "message": "Resource not accessible by integration",
+  "documentation_url": "https://docs.github.com/rest/pages/pages#update-information-about-a-apiname-pages-site",
+  "status": "403"
+}
+
+
+Pages could not be auto-enabled. Manual fix:
+  Settings -> Pages -> Source -> GitHub Actions -> Save
+  https://github.com/jgaweda/ColoringBookApp/settings/pages
+Then re-run this workflow.
