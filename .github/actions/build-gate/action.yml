@@ -8,7 +8,10 @@ description: |
     if: needs.gate.outputs.should_run == 'true'
 
   Manual `workflow_dispatch` runs always bypass the failure-halt so you can
-  recover after fixing the underlying issue.
+  recover after fixing the underlying issue. A commit message that contains
+  `[run-anyway]` or `[force-build]` also bypasses the failure-halt for that
+  specific commit — useful for an explicit "I'm pushing the fix" commit
+  without needing to click 'Run workflow' in the UI.
 
   Requires the calling workflow to declare:
     permissions:
@@ -40,6 +43,7 @@ runs:
         RUN_ID: ${{ github.run_id }}
         EVENT: ${{ github.event_name }}
         GATE_JOB_NAME: ${{ inputs.gate-job-name }}
+        HEAD_MSG: ${{ github.event.head_commit.message }}
       run: |
         python3 - <<'PY'
         import json, os, subprocess, sys
@@ -81,6 +85,12 @@ runs:
         #    so you can recover after fixing the issue.
         if EVENT == "workflow_dispatch":
             print("::notice::workflow_dispatch — bypassing failure-halt check.")
+            output("should_run=true")
+            sys.exit(0)
+
+        head_msg = os.environ.get("HEAD_MSG") or ""
+        if "[run-anyway]" in head_msg or "[force-build]" in head_msg:
+            print(f"::notice::Commit message contains a bypass tag — bypassing failure-halt check.")
             output("should_run=true")
             sys.exit(0)
 
