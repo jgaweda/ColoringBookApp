@@ -103,6 +103,22 @@ const URL = process.env.URL || "http://127.0.0.1:8765/";
   const undoEnabled = await page.$eval("button[data-action='undo']", (b) => !b.disabled);
   assert("undo button enabled after stroke", undoEnabled);
 
+  // Parental gate: tap Share, expect the gate dialog to open with a target hint.
+  await page.click("button[data-action='share']");
+  await page.waitForSelector("dialog.parental-gate", { timeout: 3000 });
+  const gateText = await page.$eval("dialog.parental-gate p", (el) => el.textContent);
+  assert("parental gate shown with target prompt", /Press and hold/.test(gateText));
+  // Cancel out of the gate without solving it.
+  await page.click("dialog.parental-gate [data-action='cancel']");
+  await page.waitForFunction(() => !document.querySelector("dialog.parental-gate"), { timeout: 2000 });
+
+  // Settings nav is also gated.
+  await page.goto(URL, { waitUntil: "networkidle" });
+  await page.click("button[data-action='settings']");
+  await page.waitForSelector("button.big-btn", { timeout: 3000 });
+  const lockedHeader = await page.$eval(".locked-pane h2", (el) => el.textContent);
+  assert("settings page is gated for grown-ups", /grown-ups/i.test(lockedHeader));
+
   await browser.close();
 
   if (errors.length) {
